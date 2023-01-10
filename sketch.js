@@ -2,8 +2,9 @@ var plane, planeimg;
 var cloud1, cloud1img, cloud2,cloud2img;
 var bird1img, bird2img;
 var invisibleGround;
-var gameState="serve";
-var obstaclesGroup
+var gameState="play";
+var obstaclesGroup;
+var bird1;
 
 function preload(){
  planeimg=loadImage("planecopy.png");
@@ -20,26 +21,38 @@ function setup() {
  plane.addImage(planeimg);
  plane.scale=0.1;
  invisibleGround = createSprite(270,360,windowWidth,10);
+ obstaclesGroup=createGroup();
 }
 
 function draw() {
     background("Deepskyblue");
     text("X "+mouseX+","+"Y "+mouseY,mouseX,mouseY);
-    invisibleGround.visible=!true;
+    invisibleGround.visible=true;
 
-    if (keyDown("space") && plane.y>=128) {
-    plane.velocityY = -15;
+    plane.setCollider("rectangle",0,0,100,200,90);
+    plane.debug=true;
+
+
+
+    
+    
+    
+    if(invisibleGround.isTouching(plane)){
+        gameState = "over";
+
     }
-    plane.velocityY = plane.velocityY + 0.6;
 
-    if(plane.isTouching(invisibleGround)){
-        gamestate="gameOver";
+    if(gameState == "play"){
+      plane.y=mouseY;
+      plane.visible
 
+    }else if(gameState == "over"){
+        //obstaclesGroup.velocityX=0;
+        console.log("terminó");
+        plane.visible=!false;
     }
 
-    /*if(gameState="gameOver"){
-        
-    }*/
+    
     obstacles();
 
     drawSprites();
@@ -47,23 +60,24 @@ function draw() {
 }
 
 function obstacles(){
+    
  if(frameCount%65 == 0){
-    var bird1 = createSprite(550,165,10,30);
-    obstacle1.velocityX=-4;
+     bird1 = createSprite(550,165,10,30);
+    bird1.velocityX=-4;
 
     var rando = Math.round(random(1,2));
-    switch(rando){
-     case 1: bird1.addImage(bird1img);
-             break;
-    case 2: bird1.addImage(bird2img);
-             break;
+        switch(rando){
+        case 1: bird1.addImage(bird1img);
+                break;
+        case 2: bird1.addImage(bird2img);
+                break;
 
-    default:break;
-    }
+        default:break;
+         }
     bird1.lifetime = 250;
-    bird1.scale = 1 ;
-    bird1.depth = plane.depth;
-    plane.depth = plane.depth+1;
+    bird1.scale = 0.5;
+    bird1.depth = plane.depth+1;
+    //plane.depth = plane.depth+1;
     obstaclesGroup.add(bird1);
  }
 }
